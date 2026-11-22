@@ -33,32 +33,44 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="BOOST GAME"/>
+            android:text="BOOST GAME"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="ANTI LAG"/>
+            android:text="ANTI LAG"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="BOOST PING"/>
+            android:text="BOOST PING"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="LOW GRAPHICS"/>
+            android:text="LOW GRAPHICS"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="FAST TOUCH"/>
+            android:text="FAST TOUCH"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="DEVICE INFORMATION"/>
+            android:text="DEVICE INFORMATION"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"/>
 
     </LinearLayout>
-</ScrollView>>
+</ScrollView>
