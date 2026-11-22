@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.app.ActivityManager;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import android.os.Handler;
 import android.os.Looper;
 
@@ -30,7 +30,6 @@ public class MonitorService extends Service {
     private LinearLayout panel;
     private TextView ramText;
     private WindowManager.LayoutParams params;
-
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final Runnable updater = new Runnable() {
@@ -63,12 +62,11 @@ public class MonitorService extends Service {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel =
-                    new NotificationChannel(
-                            CHANNEL_ID,
-                            "ZAAX Gaming Monitor",
-                            NotificationManager.IMPORTANCE_LOW
-                    );
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "ZAAX Gaming Monitor",
+                    NotificationManager.IMPORTANCE_LOW
+            );
 
             NotificationManager manager =
                     getSystemService(NotificationManager.class);
@@ -94,13 +92,17 @@ public class MonitorService extends Service {
     }
 
     private void createPanel() {
-        windowManager =
-                (WindowManager) getSystemService(WINDOW_SERVICE);
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(18, 14, 18, 14);
-        panel.setBackgroundColor(Color.rgb(20, 20, 24));
+
+        GradientDrawable background = new GradientDrawable();
+        background.setColor(Color.rgb(20, 20, 24));
+        background.setCornerRadius(20);
+        background.setStroke(2, Color.RED);
+        panel.setBackground(background);
 
         TextView title = new TextView(this);
         title.setText("♛ ZAAX MONITOR");
@@ -113,8 +115,9 @@ public class MonitorService extends Service {
         ramText.setTextSize(13);
 
         TextView close = new TextView(this);
-        close.setText("TUTUP MONITOR");
+        close.setText("TUTUP MONITOR  ✕");
         close.setTextColor(Color.RED);
+        close.setTextSize(13);
         close.setPadding(0, 12, 0, 0);
         close.setOnClickListener(v -> stopSelf());
 
@@ -143,7 +146,8 @@ public class MonitorService extends Service {
         params.x = 20;
         params.y = 100;
 
-        panel.setOnTouchListener(new View.OnTouchListener() {
+        // Geser panel melalui bagian judul saja.
+        title.setOnTouchListener(new View.OnTouchListener() {
             private int startX, startY;
             private float touchX, touchY;
 
@@ -163,11 +167,14 @@ public class MonitorService extends Service {
                         params.y = startY +
                                 (int) (event.getRawY() - touchY);
 
-                        windowManager.updateViewLayout(panel, params);
+                        try {
+                            windowManager.updateViewLayout(panel, params);
+                        } catch (Exception ignored) {
+                        }
                         return true;
                 }
 
-                return false;
+                return true;
             }
         });
 
@@ -201,7 +208,10 @@ public class MonitorService extends Service {
         handler.removeCallbacks(updater);
 
         if (windowManager != null && panel != null) {
-            windowManager.removeView(panel);
+            try {
+                windowManager.removeView(panel);
+            } catch (Exception ignored) {
+            }
             panel = null;
         }
 
@@ -213,4 +223,3 @@ public class MonitorService extends Service {
         return null;
     }
 }
-
