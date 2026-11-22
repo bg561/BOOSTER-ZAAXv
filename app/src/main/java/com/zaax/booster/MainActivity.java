@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -66,7 +65,6 @@ public class MainActivity extends Activity {
 
         header();
         statusCard();
-
         section("PERFORMANCE TOOLS");
         feature("⚡", "ANTI LAG", "Gaming maintenance");
         feature("🎮", "BOOST GAME", "Choose and launch installed games");
@@ -96,9 +94,9 @@ public class MainActivity extends Activity {
         names.setPadding(dp(12), 0, 0, 0);
         names.addView(text("BOOSTER ZAAX", 22, WHITE, true));
         names.addView(text("PREMIUM GAMING TOOL", 11, RED, true));
+
         top.addView(names);
         main.addView(top);
-
         space(28);
         main.addView(text("LEVEL UP YOUR GAME", 25, WHITE, true));
         main.addView(text("Your ultimate gaming control center.", 13, GRAY, false));
@@ -148,6 +146,7 @@ public class MainActivity extends Activity {
         card.addView(details, new LinearLayout.LayoutParams(0, -1, 1));
         card.addView(text("›", 28, RED, true));
         card.setOnClickListener(v -> runFeature(name));
+
         main.addView(card, params);
     }
 
@@ -222,19 +221,76 @@ public class MainActivity extends Activity {
                 .show();
     }
 
+    // UPDATED ZAAX ANTI LAG
     private void antiLag() {
-        new AlertDialog.Builder(this)
-                .setTitle("ANTI LAG")
-                .setMessage("Android membatasi aplikasi biasa untuk menghentikan proses aplikasi lain.\n\n" +
-                        "Buka pengaturan aplikasi untuk mengelola aplikasi yang tidak digunakan.")
-                .setPositiveButton("APP SETTINGS",
-                        (d, w) -> openSettings(Settings.ACTION_APPLICATION_SETTINGS))
-                .setNegativeButton("CLOSE", null)
-                .show();
+        try {
+            ActivityManager manager =
+                    (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+            if (manager == null) {
+                show("ZAAX ANTI LAG",
+                        "Memory service unavailable.");
+                return;
+            }
+
+            ActivityManager.MemoryInfo memory =
+                    new ActivityManager.MemoryInfo();
+
+            manager.getMemoryInfo(memory);
+
+            long total = memory.totalMem / 1048576;
+            long available = memory.availMem / 1048576;
+            long used = Math.max(0, total - available);
+
+            int percent = total > 0
+                    ? (int) (available * 100 / total)
+                    : 0;
+
+            String status;
+
+            if (memory.lowMemory || percent < 15) {
+                status = "LOW MEMORY WARNING";
+            } else if (percent < 30) {
+                status = "MEMORY MODERATE";
+            } else {
+                status = "MEMORY AVAILABLE";
+            }
+
+            String report =
+                    "♛ ZAAX ANTI LAG ♛\n\n" +
+                    "TOTAL RAM: " + total + " MB\n" +
+                    "USED RAM: " + used + " MB\n" +
+                    "AVAILABLE RAM: " + available + " MB\n" +
+                    "AVAILABLE: " + percent + "%\n\n" +
+                    "SYSTEM STATUS: " + status +
+                    "\n\n" +
+                    "ZAAX has checked your device memory." +
+                    "\n\n" +
+                    "Android restricts third-party apps " +
+                    "from force-stopping other applications." +
+                    "\n\n" +
+                    "Close unused apps through Android settings " +
+                    "if you need to free up resources.";
+
+            new AlertDialog.Builder(this)
+                    .setTitle("ZAAX ANTI LAG")
+                    .setMessage(report)
+                    .setPositiveButton("APP SETTINGS",
+                            (dialog, which) ->
+                                    openSettings(
+                                            Settings.ACTION_APPLICATION_SETTINGS))
+                    .setNegativeButton("CLOSE", null)
+                    .show();
+
+        } catch (Exception e) {
+            show("ZAAX ANTI LAG",
+                    "Unable to check device memory.");
+        }
     }
 
     private void chooseGame() {
         PackageManager pm = getPackageManager();
+
         Intent query = new Intent(Intent.ACTION_MAIN, null);
         query.addCategory(Intent.CATEGORY_LAUNCHER);
 
@@ -246,9 +302,11 @@ public class MainActivity extends Activity {
 
         for (android.content.pm.ResolveInfo app : apps) {
             String packageName = app.activityInfo.packageName;
+
             if (packageName.equals(getPackageName())) continue;
 
             Intent launch = pm.getLaunchIntentForPackage(packageName);
+
             if (launch != null) {
                 names.add(app.loadLabel(pm).toString());
                 launchIntents.add(launch);
@@ -298,6 +356,7 @@ public class MainActivity extends Activity {
                         "\nHTTP STATUS: " + response +
                         "\n\nIni adalah waktu respons ke server pengujian, " +
                         "bukan ping server Roblox.";
+
             } catch (Exception e) {
                 result = "Tes koneksi gagal atau timeout.\nPeriksa koneksi internet.";
             } finally {
@@ -305,8 +364,8 @@ public class MainActivity extends Activity {
             }
 
             final String output = result;
-
             runOnUiThread(() -> show("BOOST PING", output));
+
         }).start();
     }
 
@@ -323,6 +382,7 @@ public class MainActivity extends Activity {
                     })
                     .setNegativeButton("CANCEL", null)
                     .show();
+
             return;
         }
 
@@ -337,6 +397,7 @@ public class MainActivity extends Activity {
 
             Toast.makeText(this, "ZAAX MONITOR STARTING",
                     Toast.LENGTH_SHORT).show();
+
         } catch (Exception e) {
             show("MONITOR", "Tidak dapat memulai monitor.");
         }
@@ -354,6 +415,7 @@ public class MainActivity extends Activity {
 
             if (Build.VERSION.SDK_INT >= 23) {
                 Display.Mode[] modes = display.getSupportedModes();
+
                 info.append("\n\nSUPPORTED MODES:");
 
                 for (Display.Mode mode : modes) {
@@ -366,6 +428,7 @@ public class MainActivity extends Activity {
                             .append(" Hz");
                 }
             }
+
         } catch (Exception e) {
             info.append("Information unavailable.");
         }
@@ -379,6 +442,7 @@ public class MainActivity extends Activity {
 
         ActivityManager.MemoryInfo memory =
                 new ActivityManager.MemoryInfo();
+
         manager.getMemoryInfo(memory);
 
         String info =
@@ -435,6 +499,7 @@ public class MainActivity extends Activity {
                     "\nAVAILABLE STORAGE: " + formatGB(free);
 
             show("STORAGE INFORMATION", info);
+
         } catch (Exception e) {
             show("STORAGE INFORMATION", "Storage information unavailable.");
         }
