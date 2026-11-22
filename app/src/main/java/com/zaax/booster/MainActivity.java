@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -26,6 +27,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
@@ -39,8 +44,8 @@ public class MainActivity extends Activity {
     private LinearLayout main;
 
     private int dp(float value) {
-        return (int) (value * getResources()
-                .getDisplayMetrics().density);
+        return (int) (value *
+                getResources().getDisplayMetrics().density);
     }
 
     @Override
@@ -57,107 +62,68 @@ public class MainActivity extends Activity {
         main = new LinearLayout(this);
         main.setOrientation(LinearLayout.VERTICAL);
         main.setPadding(dp(20), dp(25), dp(20), dp(30));
-
         scroll.addView(main);
 
         header();
         statusCard();
 
         section("PERFORMANCE TOOLS");
-
-        feature("⚡", "ANTI LAG",
-                "Background app management");
-
-        feature("🎮", "BOOST GAME",
-                "Gaming preparation");
-
-        feature("▣", "LOW GRAPHICS",
-                "Graphics optimization guide");
-
-        feature("◉", "BOOST PING",
-                "Network connection information");
-
-        feature("📊", "GAMING MONITOR",
-                "Floating live RAM monitor");
+        feature("⚡", "ANTI LAG", "Gaming maintenance");
+        feature("🎮", "BOOST GAME", "Choose and launch installed games");
+        feature("▣", "LOW GRAPHICS", "Game graphics guidance");
+        feature("◉", "BOOST PING", "Internet response time test");
+        feature("📊", "GAMING MONITOR", "Floating live RAM monitor");
 
         section("DEVICE CONTROL");
-
-        feature("👆", "FAST TOUCH",
-                "Touch settings");
-
-        feature("↻", "REFRESH RATE",
-                "Display refresh information");
-
-        feature("▤", "DEVICE INFO",
-                "Complete device information");
-
-        feature("◆", "CPU INFO",
-                "Processor information");
-
-        feature("▦", "RESOLUTION",
-                "Screen resolution information");
-
-        feature("💾", "STORAGE INFO",
-                "Internal storage information");
+        feature("👆", "FAST TOUCH", "Touch settings");
+        feature("↻", "REFRESH RATE", "Display refresh information");
+        feature("▤", "DEVICE INFO", "Complete device information");
+        feature("◆", "CPU INFO", "Processor information");
+        feature("▦", "RESOLUTION", "Screen resolution information");
+        feature("💾", "STORAGE INFO", "Internal storage information");
 
         footer();
-
         setContentView(scroll);
     }
 
     private void header() {
         LinearLayout top = new LinearLayout(this);
         top.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView logo = text("♛", 48, RED, true);
-        top.addView(logo);
+        top.addView(text("♛", 48, RED, true));
 
         LinearLayout names = new LinearLayout(this);
         names.setOrientation(LinearLayout.VERTICAL);
         names.setPadding(dp(12), 0, 0, 0);
-
         names.addView(text("BOOSTER ZAAX", 22, WHITE, true));
         names.addView(text("PREMIUM GAMING TOOL", 11, RED, true));
-
         top.addView(names);
         main.addView(top);
 
         space(28);
-
         main.addView(text("LEVEL UP YOUR GAME", 25, WHITE, true));
-        main.addView(text(
-                "Your ultimate gaming control center.",
-                13, GRAY, false));
-
+        main.addView(text("Your ultimate gaming control center.", 13, GRAY, false));
         space(20);
     }
 
     private void statusCard() {
         LinearLayout card = panel();
-
         card.addView(text("ZAAX SYSTEM", 12, GRAY, true));
         spaceIn(card, 8);
         card.addView(text("● SYSTEM ONLINE", 20, RED, true));
         spaceIn(card, 8);
-        card.addView(text("BOOSTER ZAAX • VERSION 2.0",
-                10, WHITE, true));
-
+        card.addView(text("BOOSTER ZAAX • VERSION 2.0", 10, WHITE, true));
         main.addView(card);
         space(24);
     }
 
     private void section(String title) {
         space(10);
-
         TextView heading = text(title, 13, RED, true);
         heading.setPadding(dp(3), dp(10), 0, dp(8));
-
         main.addView(heading);
     }
 
-    private void feature(String icon, String name,
-                         String description) {
-
+    private void feature(String icon, String name, String description) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.HORIZONTAL);
         card.setGravity(Gravity.CENTER_VERTICAL);
@@ -166,208 +132,201 @@ public class MainActivity extends Activity {
 
         LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(-1, dp(82));
-
         params.setMargins(0, dp(5), 0, dp(5));
 
         TextView symbol = text(icon, 25, RED, true);
         symbol.setGravity(Gravity.CENTER);
-
-        card.addView(symbol,
-                new LinearLayout.LayoutParams(dp(42), -1));
+        card.addView(symbol, new LinearLayout.LayoutParams(dp(42), -1));
 
         LinearLayout details = new LinearLayout(this);
         details.setOrientation(LinearLayout.VERTICAL);
         details.setGravity(Gravity.CENTER_VERTICAL);
         details.setPadding(dp(12), 0, 0, 0);
-
         details.addView(text(name, 14, WHITE, true));
         details.addView(text(description, 10, GRAY, false));
 
-        card.addView(details,
-                new LinearLayout.LayoutParams(0, -1, 1));
-
+        card.addView(details, new LinearLayout.LayoutParams(0, -1, 1));
         card.addView(text("›", 28, RED, true));
-
         card.setOnClickListener(v -> runFeature(name));
-
         main.addView(card, params);
     }
 
     private void runFeature(String name) {
-
         switch (name) {
-
             case "ANTI LAG":
-                dialog(name,
-                        "Gaming maintenance tips:\n\n" +
-                        "• Close unused applications.\n" +
-                        "• Keep storage space available.\n" +
-                        "• Avoid overheating.\n" +
-                        "• Check background applications.",
-                        "APP SETTINGS",
-                        Settings.ACTION_APPLICATION_SETTINGS);
+                antiLag();
                 break;
-
             case "BOOST GAME":
-                dialog(name,
-                        "Prepare your gaming session:\n\n" +
-                        "• Close unused apps.\n" +
-                        "• Use a stable connection.\n" +
-                        "• Keep your phone cool.\n" +
-                        "• Lower graphics when needed.",
-                        "DISPLAY SETTINGS",
-                        Settings.ACTION_DISPLAY_SETTINGS);
+                chooseGame();
                 break;
-
             case "LOW GRAPHICS":
-                dialog(name,
-                        "Open your game's graphics settings.\n\n" +
-                        "Choose a lower graphics quality " +
-                        "to reduce rendering workload.",
-                        "APP SETTINGS",
-                        Settings.ACTION_APPLICATION_SETTINGS);
+                show("LOW GRAPHICS",
+                        "Buka pengaturan grafis di dalam game.\\n\\n" +
+                        "Pilih kualitas grafis lebih rendah jika tersedia.");
                 break;
-
             case "BOOST PING":
-                networkInfo();
+                testPing();
                 break;
-
             case "GAMING MONITOR":
                 startGamingMonitor();
                 break;
-
             case "FAST TOUCH":
-                dialog(name,
-                        "Touch response options depend on " +
-                        "your phone manufacturer.\n\n" +
-                        "Check available touch settings.",
-                        "OPEN SETTINGS",
-                        Settings.ACTION_SETTINGS);
+                openSettings(Settings.ACTION_SETTINGS);
                 break;
-
             case "REFRESH RATE":
                 refreshInfo();
                 break;
-
             case "DEVICE INFO":
                 deviceInfo();
                 break;
-
             case "CPU INFO":
                 cpuInfo();
                 break;
-
             case "RESOLUTION":
                 resolutionInfo();
                 break;
-
             case "STORAGE INFO":
                 storageInfo();
                 break;
         }
     }
 
+    private void antiLag() {
+        new AlertDialog.Builder(this)
+                .setTitle("ANTI LAG")
+                .setMessage("Android membatasi aplikasi biasa untuk menghentikan proses aplikasi lain.\\n\\n" +
+                        "Buka pengaturan aplikasi untuk mengelola aplikasi yang tidak digunakan.")
+                .setPositiveButton("APP SETTINGS",
+                        (d, w) -> openSettings(Settings.ACTION_APPLICATION_SETTINGS))
+                .setNegativeButton("CLOSE", null)
+                .show();
+    }
+
+    private void chooseGame() {
+        PackageManager pm = getPackageManager();
+        Intent query = new Intent(Intent.ACTION_MAIN, null);
+        query.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<android.content.pm.ResolveInfo> apps =
+                pm.queryIntentActivities(query, 0);
+
+        List<String> names = new ArrayList<>();
+        List<Intent> launchIntents = new ArrayList<>();
+
+        for (android.content.pm.ResolveInfo app : apps) {
+            String packageName = app.activityInfo.packageName;
+            if (packageName.equals(getPackageName())) continue;
+
+            Intent launch = pm.getLaunchIntentForPackage(packageName);
+            if (launch != null) {
+                names.add(app.loadLabel(pm).toString());
+                launchIntents.add(launch);
+            }
+        }
+
+        if (names.isEmpty()) {
+            show("BOOST GAME", "Tidak ditemukan aplikasi yang bisa dibuka.");
+            return;
+        }
+
+        String[] items = names.toArray(new String[0]);
+
+        new AlertDialog.Builder(this)
+                .setTitle("PILIH GAME / APLIKASI")
+                .setItems(items, (d, which) -> {
+                    try {
+                        startActivity(launchIntents.get(which));
+                    } catch (Exception e) {
+                        show("BOOST GAME", "Aplikasi tidak dapat dibuka.");
+                    }
+                })
+                .setNegativeButton("CLOSE", null)
+                .show();
+    }
+
+    private void testPing() {
+        show("BOOST PING", "Sedang menguji respons internet...");
+
+        new Thread(() -> {
+            long start = System.currentTimeMillis();
+            String result;
+
+            HttpURLConnection connection = null;
+
+            try {
+                URL url = new URL("https://www.google.com/generate_204");
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.setRequestMethod("GET");
+
+                int response = connection.getResponseCode();
+                long elapsed = System.currentTimeMillis() - start;
+
+                result = "INTERNET RESPONSE: " + elapsed + " ms" +
+                        "\\nHTTP STATUS: " + response +
+                        "\\n\\nIni adalah waktu respons ke server pengujian, " +
+                        "bukan ping server Roblox.";
+            } catch (Exception e) {
+                result = "Tes koneksi gagal atau timeout.\\nPeriksa koneksi internet.";
+            } finally {
+                if (connection != null) connection.disconnect();
+            }
+
+            final String output = result;
+
+            runOnUiThread(() -> show("BOOST PING", output));
+        }).start();
+    }
+
     private void startGamingMonitor() {
-
-        if (Build.VERSION.SDK_INT >= 23 &&
-                !Settings.canDrawOverlays(this)) {
-
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
             new AlertDialog.Builder(this)
                     .setTitle("ZAAX MONITOR PERMISSION")
-                    .setMessage(
-                            "Izinkan BOOSTER ZAAX menampilkan " +
-                            "panel monitor di atas aplikasi lain."
-                    )
+                    .setMessage("Izinkan BOOSTER ZAAX menampilkan panel monitor di atas aplikasi lain.")
                     .setPositiveButton("ALLOW", (d, w) -> {
                         Intent intent = new Intent(
                                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:" + getPackageName())
-                        );
+                                Uri.parse("package:" + getPackageName()));
                         startActivity(intent);
                     })
                     .setNegativeButton("CANCEL", null)
                     .show();
-
             return;
         }
 
-        Intent service = new Intent(
-                this, MonitorService.class
-        );
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            startForegroundService(service);
-        } else {
-            startService(service);
-        }
-
-        Toast.makeText(
-                this,
-                "ZAAX MONITOR STARTING",
-                Toast.LENGTH_SHORT
-        ).show();
-    }
-
-    private void networkInfo() {
-
-        String result = "NETWORK STATUS: ";
+        Intent service = new Intent(this, MonitorService.class);
 
         try {
-            ConnectivityManager cm =
-                    (ConnectivityManager) getSystemService(
-                            Context.CONNECTIVITY_SERVICE);
-
-            Network network = cm.getActiveNetwork();
-
-            NetworkCapabilities caps =
-                    cm.getNetworkCapabilities(network);
-
-            if (caps == null) {
-                result += "DISCONNECTED";
-            } else if (caps.hasTransport(
-                    NetworkCapabilities.TRANSPORT_WIFI)) {
-                result += "WI-FI";
-            } else if (caps.hasTransport(
-                    NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                result += "MOBILE DATA";
+            if (Build.VERSION.SDK_INT >= 26) {
+                startForegroundService(service);
             } else {
-                result += "CONNECTED";
+                startService(service);
             }
 
-            if (caps != null) {
-                result += "\nINTERNET: " +
-                        (caps.hasCapability(
-                        NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-                        ? "AVAILABLE" : "NOT VERIFIED");
-            }
-
+            Toast.makeText(this, "ZAAX MONITOR STARTING",
+                    Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            result += "UNAVAILABLE";
+            show("MONITOR", "Tidak dapat memulai monitor.");
         }
-
-        show("BOOST PING", result);
     }
 
     private void refreshInfo() {
-
         StringBuilder info = new StringBuilder();
 
         try {
-            Display display = getWindowManager()
-                    .getDefaultDisplay();
+            Display display = getWindowManager().getDefaultDisplay();
 
             info.append("CURRENT REFRESH RATE: ")
-                    .append(String.format(Locale.US,
-                            "%.1f Hz", display.getRefreshRate()));
+                    .append(String.format(Locale.US, "%.1f Hz",
+                            display.getRefreshRate()));
 
             if (Build.VERSION.SDK_INT >= 23) {
-
                 Display.Mode[] modes = display.getSupportedModes();
-
-                info.append("\n\nSUPPORTED MODES:");
+                info.append("\\n\\nSUPPORTED MODES:");
 
                 for (Display.Mode mode : modes) {
-                    info.append("\n")
+                    info.append("\\n")
                             .append(mode.getPhysicalWidth())
                             .append(" x ")
                             .append(mode.getPhysicalHeight())
@@ -376,7 +335,6 @@ public class MainActivity extends Activity {
                             .append(" Hz");
                 }
             }
-
         } catch (Exception e) {
             info.append("Information unavailable.");
         }
@@ -385,67 +343,53 @@ public class MainActivity extends Activity {
     }
 
     private void deviceInfo() {
-
         ActivityManager manager =
                 (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 
         ActivityManager.MemoryInfo memory =
                 new ActivityManager.MemoryInfo();
-
         manager.getMemoryInfo(memory);
 
         String info =
                 "MODEL: " + Build.MODEL +
-                "\nBRAND: " + Build.BRAND +
-                "\nDEVICE: " + Build.DEVICE +
-                "\nANDROID: " + Build.VERSION.RELEASE +
-                "\nSDK: " + Build.VERSION.SDK_INT +
-                "\nTOTAL RAM: " +
-                (memory.totalMem / 1048576) + " MB" +
-                "\nAVAILABLE RAM: " +
-                (memory.availMem / 1048576) + " MB" +
-                "\nLOW MEMORY: " + memory.lowMemory;
+                "\\nBRAND: " + Build.BRAND +
+                "\\nDEVICE: " + Build.DEVICE +
+                "\\nANDROID: " + Build.VERSION.RELEASE +
+                "\\nSDK: " + Build.VERSION.SDK_INT +
+                "\\nTOTAL RAM: " + memory.totalMem / 1048576 + " MB" +
+                "\\nAVAILABLE RAM: " + memory.availMem / 1048576 + " MB";
 
         show("DEVICE INFORMATION", info);
     }
 
     private void cpuInfo() {
-
         String info =
                 "PROCESSOR: " + Build.HARDWARE +
-                "\nDEVICE: " + Build.DEVICE +
-                "\nCPU CORES: " +
+                "\\nDEVICE: " + Build.DEVICE +
+                "\\nCPU CORES: " +
                 Runtime.getRuntime().availableProcessors() +
-                "\nARCHITECTURE: " +
-                Build.SUPPORTED_ABIS[0] +
-                "\n\nCPU CLOCK CONTROL IS RESTRICTED BY ANDROID.";
+                "\\nARCHITECTURE: " + Build.SUPPORTED_ABIS[0] +
+                "\\n\\nCPU CLOCK CONTROL IS RESTRICTED BY ANDROID.";
 
         show("CPU INFORMATION", info);
     }
 
     private void resolutionInfo() {
-
-        int width = getResources()
-                .getDisplayMetrics().widthPixels;
-
-        int height = getResources()
-                .getDisplayMetrics().heightPixels;
-
-        float density = getResources()
-                .getDisplayMetrics().density;
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        float density = getResources().getDisplayMetrics().density;
 
         String info =
                 "SCREEN WIDTH: " + width + " px" +
-                "\nSCREEN HEIGHT: " + height + " px" +
-                "\nDENSITY: " +
+                "\\nSCREEN HEIGHT: " + height + " px" +
+                "\\nDENSITY: " +
                 String.format(Locale.US, "%.2f", density) +
-                "\n\nThese are the current app display metrics.";
+                "\\n\\nThese are current app display metrics.";
 
         show("RESOLUTION INFORMATION", info);
     }
 
     private void storageInfo() {
-
         try {
             StatFs stat = new StatFs(
                     Environment.getDataDirectory().getPath());
@@ -456,36 +400,30 @@ public class MainActivity extends Activity {
 
             String info =
                     "TOTAL STORAGE: " + formatGB(total) +
-                    "\nUSED STORAGE: " + formatGB(used) +
-                    "\nAVAILABLE STORAGE: " + formatGB(free);
+                    "\\nUSED STORAGE: " + formatGB(used) +
+                    "\\nAVAILABLE STORAGE: " + formatGB(free);
 
             show("STORAGE INFORMATION", info);
-
         } catch (Exception e) {
-            show("STORAGE INFORMATION",
-                    "Storage information unavailable.");
+            show("STORAGE INFORMATION", "Storage information unavailable.");
         }
     }
 
     private String formatGB(long bytes) {
-        return String.format(Locale.US,
-                "%.2f GB", bytes / 1073741824.0);
+        return String.format(Locale.US, "%.2f GB",
+                bytes / 1073741824.0);
     }
 
-    private void dialog(String title, String message,
-                        String button, String action) {
-
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(button,
-                        (d, w) -> openSettings(action))
-                .setNegativeButton("CLOSE", null)
-                .show();
+    private void openSettings(String action) {
+        try {
+            startActivity(new Intent(action));
+        } catch (Exception e) {
+            Toast.makeText(this, "Settings unavailable",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void show(String title, String message) {
-
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
@@ -493,85 +431,53 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    private void openSettings(String action) {
-
-        try {
-            startActivity(new Intent(action));
-        } catch (Exception e) {
-            Toast.makeText(this,
-                    "Settings unavailable",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private LinearLayout panel() {
-
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(18), dp(18), dp(18), dp(18));
         card.setBackground(box(PANEL, 20));
-
         return card;
     }
 
-    private TextView text(String value, int size,
-                          int color, boolean bold) {
-
+    private TextView text(String value, int size, int color, boolean bold) {
         TextView t = new TextView(this);
         t.setText(value);
         t.setTextSize(size);
         t.setTextColor(color);
 
-        if (bold) {
-            t.setTypeface(null, Typeface.BOLD);
-        }
+        if (bold) t.setTypeface(null, Typeface.BOLD);
 
         return t;
     }
 
     private GradientDrawable box(int color, int radius) {
-
         GradientDrawable shape = new GradientDrawable();
         shape.setColor(color);
         shape.setCornerRadius(dp(radius));
         shape.setStroke(dp(1), RED);
-
         return shape;
     }
 
     private void space(int height) {
-
         View v = new View(this);
-
-        main.addView(v,
-                new LinearLayout.LayoutParams(1, dp(height)));
+        main.addView(v, new LinearLayout.LayoutParams(1, dp(height)));
     }
 
     private void spaceIn(LinearLayout layout, int height) {
-
         View v = new View(this);
-
-        layout.addView(v,
-                new LinearLayout.LayoutParams(1, dp(height)));
+        layout.addView(v, new LinearLayout.LayoutParams(1, dp(height)));
     }
 
     private void footer() {
-
         space(25);
 
-        TextView end = text(
-                "♛ POWERED BY ZAAX ♛",
-                13, RED, true);
-
+        TextView end = text("♛ POWERED BY ZAAX ♛", 13, RED, true);
         end.setGravity(Gravity.CENTER);
         main.addView(end);
 
         space(10);
 
-        TextView version = text(
-                "BOOSTER ZAAX • V2.0",
-                10, GRAY, false);
-
+        TextView version = text("BOOSTER ZAAX • V2.0", 10, GRAY, false);
         version.setGravity(Gravity.CENTER);
         main.addView(version);
     }
