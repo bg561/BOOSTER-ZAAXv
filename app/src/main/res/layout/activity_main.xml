@@ -9,22 +9,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:src="@drawable/zaax_logo"
+            android:contentDescription="ZAAX Logo"
+            android:layout_marginTop="20dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="BOOSTER ZAAX"
             android:textColor="#FF1744"
-            android:textSize="28sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:padding="20dp"/>
+            android:padding="12dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ULTIMATE GAMING BOOSTER"
+            android:text="PREMIUM GAMING TOOL"
             android:textColor="#AAAAAA"
             android:textSize="12sp"
             android:gravity="center"
