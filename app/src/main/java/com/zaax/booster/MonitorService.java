@@ -19,20 +19,36 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.os.Handler;
+import android.os.Looper;
+
 public class MonitorService extends Service {
+
+    private static final String CHANNEL_ID = "zaax_monitor";
 
     private WindowManager windowManager;
     private LinearLayout panel;
     private TextView ramText;
-    private TextView titleText;
+    private WindowManager.LayoutParams params;
 
-    private static final String CHANNEL_ID = "zaax_monitor";
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private final Runnable updater = new Runnable() {
+        @Override
+        public void run() {
+            updateRam();
+
+            if (panel != null) {
+                handler.postDelayed(this, 1500);
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        createNotification();
+        createNotificationChannel();
         startForeground(1, buildNotification());
 
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -42,9 +58,10 @@ public class MonitorService extends Service {
         }
 
         createPanel();
+        handler.post(updater);
     }
 
-    private void createNotification() {
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel =
                     new NotificationChannel(
@@ -85,11 +102,11 @@ public class MonitorService extends Service {
         panel.setPadding(18, 14, 18, 14);
         panel.setBackgroundColor(Color.rgb(20, 20, 24));
 
-        titleText = new TextView(this);
-        titleText.setText("♛ ZAAX MONITOR");
-        titleText.setTextColor(Color.RED);
-        titleText.setTextSize(16);
-        titleText.setPadding(0, 0, 0, 10);
+        TextView title = new TextView(this);
+        title.setText("♛ ZAAX MONITOR");
+        title.setTextColor(Color.RED);
+        title.setTextSize(16);
+        title.setPadding(0, 0, 0, 10);
 
         ramText = new TextView(this);
         ramText.setTextColor(Color.WHITE);
@@ -101,26 +118,26 @@ public class MonitorService extends Service {
         close.setPadding(0, 12, 0, 0);
         close.setOnClickListener(v -> stopSelf());
 
-        panel.addView(titleText);
+        panel.addView(title);
         panel.addView(ramText);
         panel.addView(close);
 
         int overlayType;
 
         if (Build.VERSION.SDK_INT >= 26) {
-            overlayType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            overlayType =
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             overlayType = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
-        WindowManager.LayoutParams params =
-                new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        overlayType,
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                        PixelFormat.TRANSLUCENT
-                );
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                overlayType,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+        );
 
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 20;
@@ -141,22 +158,28 @@ public class MonitorService extends Service {
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        params.x = startX + (int)(event.getRawX() - touchX);
-                        params.y = startY + (int)(event.getRawY() - touchY);
+                        params.x = startX +
+                                (int) (event.getRawX() - touchX);
+                        params.y = startY +
+                                (int) (event.getRawY() - touchY);
+
                         windowManager.updateViewLayout(panel, params);
                         return true;
                 }
+
                 return false;
             }
         });
 
         windowManager.addView(panel, params);
-        updateRam();
     }
 
     private void updateRam() {
+        if (ramText == null) return;
+
         ActivityManager manager =
-                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+                (ActivityManager) getSystemService(
+                        Context.ACTIVITY_SERVICE);
 
         ActivityManager.MemoryInfo info =
                 new ActivityManager.MemoryInfo();
@@ -168,20 +191,20 @@ public class MonitorService extends Service {
         long used = total - available;
 
         ramText.setText(
-                "RAM: " + used + " MB / " + total + " MB"
+                "RAM USED: " + used + " MB\n" +
+                "RAM TOTAL: " + total + " MB"
         );
-
-        ramText.postDelayed(() -> {
-            if (panel != null) updateRam();
-        }, 1500);
     }
 
     @Override
     public void onDestroy() {
+        handler.removeCallbacks(updater);
+
         if (windowManager != null && panel != null) {
             windowManager.removeView(panel);
             panel = null;
         }
+
         super.onDestroy();
     }
 
@@ -190,3 +213,4 @@ public class MonitorService extends Service {
         return null;
     }
 }
+
