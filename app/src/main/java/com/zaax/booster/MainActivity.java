@@ -2,14 +2,13 @@
 package com.zaax.booster;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.os.Bundle;
-import android.os.Build;
+import android.app.ActivityManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.content.Intent;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
@@ -20,320 +19,290 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    private LinearLayout root;
-    private TextView boostStatus;
-    private boolean boostActive = false;
+    int bg = Color.rgb(9, 10, 15);
+    int panel = Color.rgb(22, 24, 33);
+    int red = Color.rgb(255, 35, 65);
+    int white = Color.WHITE;
+    int gray = Color.rgb(155, 160, 175);
 
-    private final int BG = Color.rgb(12, 12, 16);
-    private final int CARD = Color.rgb(25, 25, 32);
-    private final int RED = Color.rgb(230, 25, 55);
-    private final int WHITE = Color.WHITE;
-    private final int GREY = Color.rgb(165, 165, 175);
+    LinearLayout main;
+
+    int dp(float value) {
+        return (int) (value * getResources()
+            .getDisplayMetrics().density);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setStatusBarColor(BG);
-        getWindow().setNavigationBarColor(Color.BLACK);
+        getWindow().setStatusBarColor(bg);
+        getWindow().setNavigationBarColor(bg);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
+        scroll.setBackgroundColor(bg);
 
-        root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(20), dp(22), dp(20), dp(28));
-        root.setBackgroundColor(BG);
+        main = new LinearLayout(this);
+        main.setOrientation(LinearLayout.VERTICAL);
+        main.setPadding(dp(20), dp(24), dp(20), dp(30));
 
-        scroll.addView(root);
+        scroll.addView(main);
+
+        header();
+        statusCard();
+        section("PERFORMANCE TOOLS");
+        feature("⚡", "ANTI LAG", "Reduce background distractions",
+            "ANTI LAG");
+        feature("🎮", "BOOST GAME", "Prepare your device for gaming",
+            "BOOST GAME");
+        feature("▣", "LOW GRAPHICS", "Game graphics guide",
+            "LOW GRAPHICS");
+        feature("◉", "BOOST PING", "Check your network connection",
+            "BOOST PING");
+
+        section("DEVICE CONTROL");
+        feature("👆", "FAST TOUCH", "Touch settings shortcut",
+            "FAST TOUCH");
+        feature("↻", "REFRESH RATE", "Open display settings",
+            "REFRESH RATE");
+        feature("▤", "DEVICE INFO", "View device specifications",
+            "DEVICE INFO");
+        feature("◆", "CPU BOOST", "CPU information",
+            "CPU BOOST");
+        feature("▦", "RESOLUTION", "Resolution information",
+            "RESOLUTION");
+
+        footer();
+
         setContentView(scroll);
-
-        buildDashboard();
     }
 
-    private void buildDashboard() {
+    void header() {
+        LinearLayout top = new LinearLayout(this);
+        top.setGravity(Gravity.CENTER_VERTICAL);
+        top.setOrientation(LinearLayout.HORIZONTAL);
 
-        TextView crown = text("♛", 48, RED, true);
-        crown.setGravity(Gravity.CENTER);
-        root.addView(crown);
+        TextView logo = new TextView(this);
+        logo.setText("♛");
+        logo.setTextColor(red);
+        logo.setTextSize(38);
+        logo.setTypeface(null, Typeface.BOLD);
+        top.addView(logo);
 
-        TextView title = text("BOOSTER ZAAX", 27, WHITE, true);
-        title.setGravity(Gravity.CENTER);
-        root.addView(title);
+        LinearLayout names = new LinearLayout(this);
+        names.setOrientation(LinearLayout.VERTICAL);
+        names.setPadding(dp(12), 0, 0, 0);
 
-        TextView subtitle = text(
-            "GAMING PERFORMANCE CENTER  •  V1.0",
-            10, GREY, true
-        );
-        subtitle.setGravity(Gravity.CENTER);
-        root.addView(subtitle);
+        TextView title = text("BOOSTER ZAAX", 21, white, true);
+        TextView sub = text("GAMING PERFORMANCE", 10, gray, true);
+
+        names.addView(title);
+        names.addView(sub);
+
+        top.addView(names);
+        main.addView(top);
 
         space(25);
 
-        LinearLayout statusCard = card();
-        statusCard.setOrientation(LinearLayout.VERTICAL);
+        TextView welcome = text("LEVEL UP YOUR GAME", 23, white, true);
+        main.addView(welcome);
 
-        addText(statusCard, "ZAAX PERFORMANCE STATUS", 12, GREY, true);
+        TextView desc = text(
+            "Your gaming control center.",
+            13, gray, false
+        );
+        main.addView(desc);
 
-        boostStatus = text("READY TO BOOST", 21, RED, true);
-        statusCard.addView(boostStatus);
+        space(20);
+    }
 
-        addText(statusCard,
-            "Your gaming control center is ready.",
-            12, GREY, false);
+    void statusCard() {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(18), dp(18), dp(18), dp(18));
+        card.setBackground(box(red, 22));
 
-        root.addView(statusCard);
+        TextView label = text("ZAAX SYSTEM", 12, gray, true);
+        TextView ready = text("●  BOOSTER READY", 19, white, true);
+        TextView version = text("VERSION 1.0  •  ANDROID", 10, gray, true);
 
-        space(22);
+        card.addView(label);
+        spaceIn(card, 8);
+        card.addView(ready);
+        spaceIn(card, 7);
+        card.addView(version);
 
-        addText(root, "MAIN CONTROL", 15, WHITE, true);
-        space(10);
-
-        addFeature("⚡", "START BOOST",
-            "Gaming session", this::startBoost);
-
-        addFeature("🎮", "BOOST GAME",
-            "Game preparation", this::boostGame);
-
-        addFeature("🚀", "ANTI LAG",
-            "Performance tips", this::antiLag);
-
-        addFeature("🎨", "LOW GRAPHICS",
-            "Graphics guide", this::lowGraphics);
-
-        addFeature("📡", "BOOST PING",
-            "Network diagnostics", this::boostPing);
-
-        addFeature("👆", "FAST TOUCH",
-            "Touch settings guide", this::fastTouch);
-
-        addFeature("🖥", "SET HZ 60 / 144",
-            "Display refresh settings", this::refreshRate);
-
-        addFeature("📱", "DEVICE INFORMATION",
-            "Hardware information", this::deviceInfo);
-
-        addFeature("🔍", "RESOLUTION 60 / 70 / 80%",
-            "Display scaling guide", this::resolution);
-
-        addFeature("⚙", "CPU BOOST",
-            "CPU information", this::cpuInfo);
-
+        main.addView(card);
         space(25);
-
-        TextView footer = text(
-            "POWERED BY ZAAX  •  OWNER ALBY",
-            10, GREY, true
-        );
-        footer.setGravity(Gravity.CENTER);
-        root.addView(footer);
     }
 
-    private void startBoost() {
-        boostActive = !boostActive;
-
-        if (boostActive) {
-            boostStatus.setText("GAMING SESSION ACTIVE");
-            boostStatus.setTextColor(RED);
-
-            message("Gaming session started.");
-        } else {
-            boostStatus.setText("READY TO BOOST");
-            message("Gaming session ended.");
-        }
+    void section(String name) {
+        space(8);
+        TextView heading = text(name, 12, red, true);
+        heading.setPadding(2, dp(8), 2, dp(8));
+        main.addView(heading);
     }
 
-    private void boostGame() {
-        showDialog("BOOST GAME",
-            "Prepare your gaming session:\n\n" +
-            "• Close apps you are not using.\n" +
-            "• Use a stable internet connection.\n" +
-            "• Choose suitable graphics settings.\n\n" +
-            "ZAAX does not force other games to change their settings.");
-    }
+    void feature(String icon, String name,
+                 String description, String action) {
 
-    private void antiLag() {
-        showDialog("ANTI LAG",
-            "Performance checklist:\n\n" +
-            "• Close unnecessary apps.\n" +
-            "• Keep enough storage space.\n" +
-            "• Avoid overheating.\n" +
-            "• Use a stable network.\n\n" +
-            "These steps help reduce avoidable slowdowns.");
-    }
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(15), dp(15), dp(15), dp(15));
+        card.setBackground(box(panel, 18));
 
-    private void lowGraphics() {
-        showDialog("LOW GRAPHICS MODE",
-            "For supported games:\n\n" +
-            "• Open the game's Settings.\n" +
-            "• Find Graphics Mode.\n" +
-            "• Select Manual if available.\n" +
-            "• Lower the graphics quality.\n\n" +
-            "ZAAX cannot force graphics settings inside other apps.");
-    }
+        LinearLayout.LayoutParams params =
+            new LinearLayout.LayoutParams(
+                -1, dp(82)
+            );
+        params.setMargins(0, dp(5), 0, dp(5));
 
-    private void boostPing() {
-        showDialog("BOOST PING",
-            "NETWORK DIAGNOSTICS\n\n" +
-            "• Check your Wi-Fi or mobile signal.\n" +
-            "• Avoid downloads while gaming.\n" +
-            "• Choose a nearby game server if available.\n\n" +
-            "ZAAX cannot guarantee lower ping or change your ISP routing.");
-    }
-
-    private void fastTouch() {
-        showDialog("FAST TOUCH",
-            "TOUCH SETTINGS\n\n" +
-            "Use your phone's supported touch settings if available.\n\n" +
-            "Touch sampling rate is controlled by the device hardware. " +
-            "A normal app cannot force it to increase.");
-    }
-
-    private void refreshRate() {
-        try {
-            startActivity(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
-        } catch (Exception e) {
-            message("Display settings are unavailable.");
-        }
-    }
-
-    private void deviceInfo() {
-        String model = Build.MANUFACTURER + " " + Build.MODEL;
-        String android = Build.VERSION.RELEASE;
-        String hardware = Build.HARDWARE;
-        String cores = String.valueOf(
-            Runtime.getRuntime().availableProcessors()
-        );
-
-        ActivityManager.MemoryInfo memory =
-            new ActivityManager.MemoryInfo();
-
-        ActivityManager manager =
-            (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-
-        manager.getMemoryInfo(memory);
-
-        String ram = String.format("%.2f GB",
-            memory.totalMem / (1024.0 * 1024.0 * 1024.0));
-
-        float hz = getWindowManager()
-            .getDefaultDisplay().getRefreshRate();
-
-        showDialog("DEVICE INFORMATION",
-            "MODEL: " + model +
-            "\nANDROID: " + android +
-            "\nHARDWARE: " + hardware +
-            "\nCPU CORES: " + cores +
-            "\nTOTAL RAM: " + ram +
-            "\nCURRENT DISPLAY: " +
-            String.format("%.0f Hz", hz));
-    }
-
-    private void resolution() {
-        showDialog("RESOLUTION CONTROL",
-            "AVAILABLE PRESETS\n\n" +
-            "60%  •  Low scaling\n" +
-            "70%  •  Medium scaling\n" +
-            "80%  •  High scaling\n\n" +
-            "These are planned presets. A normal Android app " +
-            "cannot force system-wide resolution scaling without " +
-            "supported system permissions.");
-    }
-
-    private void cpuInfo() {
-        showDialog("CPU INFORMATION",
-            "PROCESSOR: " + Build.HARDWARE +
-            "\nAVAILABLE CORES: " +
-            Runtime.getRuntime().availableProcessors() +
-            "\n\nZAAX can display processor information, " +
-            "but cannot force CPU clock speed on a standard " +
-            "non-root Android device.");
-    }
-
-    private void addFeature(String icon, String name,
-                            String description, Runnable action) {
-
-        LinearLayout item = card();
-        item.setOrientation(LinearLayout.HORIZONTAL);
-        item.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView symbol = text(icon, 25, RED, true);
+        TextView symbol = text(icon, 25, red, true);
         symbol.setGravity(Gravity.CENTER);
-        item.addView(symbol,
-            new LinearLayout.LayoutParams(dp(48), dp(55)));
+        card.addView(symbol, new LinearLayout.LayoutParams(
+            dp(42), -1
+        ));
 
-        LinearLayout labels = new LinearLayout(this);
-        labels.setOrientation(LinearLayout.VERTICAL);
-        labels.setPadding(dp(10), 0, 0, 0);
+        LinearLayout details = new LinearLayout(this);
+        details.setOrientation(LinearLayout.VERTICAL);
+        details.setPadding(dp(12), 0, 0, 0);
 
-        addText(labels, name, 13, WHITE, true);
-        addText(labels, description, 11, GREY, false);
+        details.addView(text(name, 14, white, true));
+        details.addView(text(description, 10, gray, false));
 
-        item.addView(labels,
-            new LinearLayout.LayoutParams(0,
-                -2, 1));
+        card.addView(details, new LinearLayout.LayoutParams(
+            0, -2, 1
+        ));
 
-        TextView arrow = text("›", 28, RED, true);
-        item.addView(arrow);
+        TextView arrow = text("›", 28, red, true);
+        card.addView(arrow);
 
-        item.setOnClickListener(v -> action.run());
+        card.setOnClickListener(v -> openFeature(action));
 
-        root.addView(item);
-        space(9);
+        main.addView(card, params);
     }
 
-    private LinearLayout card() {
-        LinearLayout box = new LinearLayout(this);
-        box.setPadding(dp(16), dp(15), dp(16), dp(15));
+    void openFeature(String action) {
 
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(CARD);
-        bg.setCornerRadius(dp(15));
-        bg.setStroke(dp(1), Color.rgb(65, 25, 38));
-
-        box.setBackground(bg);
-        return box;
-    }
-
-    private TextView text(String value, int size,
-                          int color, boolean bold) {
-        TextView view = new TextView(this);
-        view.setText(value);
-        view.setTextSize(size);
-        view.setTextColor(color);
-
-        if (bold) {
-            view.setTypeface(null, Typeface.BOLD);
+        if (action.equals("DEVICE INFO")) {
+            deviceInfo();
+            return;
         }
 
-        return view;
-    }
+        if (action.equals("REFRESH RATE")) {
+            openSettings(Settings.ACTION_DISPLAY_SETTINGS);
+            return;
+        }
 
-    private void addText(LinearLayout parent, String value,
-                         int size, int color, boolean bold) {
-        parent.addView(text(value, size, color, bold));
-    }
+        if (action.equals("FAST TOUCH")) {
+            openSettings(Settings.ACTION_SETTINGS);
+            return;
+        }
 
-    private void showDialog(String title, String content) {
+        String message;
+
+        switch (action) {
+            case "ANTI LAG":
+                message = "Close unused apps manually and keep enough free storage.";
+                break;
+            case "BOOST GAME":
+                message = "Your device is ready. Open your game and adjust its settings.";
+                break;
+            case "LOW GRAPHICS":
+                message = "Open your game's graphics settings and choose a lower quality.";
+                break;
+            case "BOOST PING":
+                message = "Check your Wi-Fi or mobile signal. Ping depends on your network and game server.";
+                break;
+            case "CPU BOOST":
+                message = "CPU clock control requires system privileges. This app cannot force CPU speed.";
+                break;
+            default:
+                message = "60%, 70%, and 80% resolution presets need special system permissions. They are not applied yet.";
+                break;
+        }
+
         new AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(content)
+            .setTitle(action)
+            .setMessage(message)
             .setPositiveButton("GOT IT", null)
             .show();
     }
 
-    private void message(String value) {
-        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
+    void deviceInfo() {
+        ActivityManager manager =
+            (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+        ActivityManager.MemoryInfo memory =
+            new ActivityManager.MemoryInfo();
+
+        manager.getMemoryInfo(memory);
+
+        String info =
+            "DEVICE: " + android.os.Build.MODEL +
+            "\nBRAND: " + android.os.Build.BRAND +
+            "\nANDROID: " + android.os.Build.VERSION.RELEASE +
+            "\nRAM TOTAL: " +
+            (memory.totalMem / (1024 * 1024)) + " MB" +
+            "\nRAM AVAILABLE: " +
+            (memory.availMem / (1024 * 1024)) + " MB";
+
+        new AlertDialog.Builder(this)
+            .setTitle("DEVICE INFORMATION")
+            .setMessage(info)
+            .setPositiveButton("CLOSE", null)
+            .show();
     }
 
-    private void space(int height) {
-        View gap = new View(this);
-        root.addView(gap,
-            new LinearLayout.LayoutParams(1, dp(height)));
+    void openSettings(String action) {
+        try {
+            startActivity(new Intent(action));
+        } catch (Exception e) {
+            Toast.makeText(this,
+                "Settings unavailable",
+                Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private int dp(int value) {
-        return (int) (value *
-            getResources().getDisplayMetrics().density + 0.5f);
+    void footer() {
+        space(25);
+        TextView end = text(
+            "♛  POWERED BY ZAAX  ♛",
+            12, red, true
+        );
+        end.setGravity(Gravity.CENTER);
+        main.addView(end);
+    }
+
+    TextView text(String value, int size,
+                  int color, boolean bold) {
+        TextView t = new TextView(this);
+        t.setText(value);
+        t.setTextSize(size);
+        t.setTextColor(color);
+        if (bold) {
+            t.setTypeface(null, Typeface.BOLD);
+        }
+        return t;
+    }
+
+    GradientDrawable box(int color, int radius) {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(color);
+        shape.setCornerRadius(dp(radius));
+        shape.setStroke(dp(1), Color.rgb(48, 35, 48));
+        return shape;
+    }
+
+    void space(int height) {
+        View v = new View(this);
+        main.addView(v, new LinearLayout.LayoutParams(1, dp(height)));
+    }
+
+    void spaceIn(LinearLayout layout, int height) {
+        View v = new View(this);
+        layout.addView(v, new LinearLayout.LayoutParams(1, dp(height)));
     }
 }
