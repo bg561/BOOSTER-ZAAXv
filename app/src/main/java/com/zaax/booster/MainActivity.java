@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
         section("PERFORMANCE TOOLS");
         feature("⚡", "ANTI LAG", "Gaming maintenance");
         feature("🎮", "BOOST GAME", "Choose and launch installed games");
-        feature("▣", "LOW GRAPHICS", "Game graphics guidance");
+        feature("▦", "PIXEL GRAPHICS", "Low graphics preset");
         feature("◉", "BOOST PING", "Internet response time test");
         feature("📊", "GAMING MONITOR", "Floating live RAM monitor");
 
@@ -159,10 +159,8 @@ public class MainActivity extends Activity {
             case "BOOST GAME":
                 chooseGame();
                 break;
-            case "LOW GRAPHICS":
-                show("LOW GRAPHICS",
-                        "Buka pengaturan grafis di dalam game.\\n\\n" +
-                        "Pilih kualitas grafis lebih rendah jika tersedia.");
+            case "PIXEL GRAPHICS":
+                pixelGraphics();
                 break;
             case "BOOST PING":
                 testPing();
@@ -191,10 +189,43 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void pixelGraphics() {
+        String[] presets = {
+                "LOW GRAPHICS",
+                "VERY LOW GRAPHICS",
+                "PIXEL / BLOCKY LOOK"
+        };
+
+        new AlertDialog.Builder(this)
+                .setTitle("ZAAX PIXEL GRAPHICS")
+                .setItems(presets, (dialog, which) -> {
+                    String title;
+                    String message;
+
+                    if (which == 0) {
+                        title = "LOW GRAPHICS";
+                        message = "Pilih kualitas grafis LOW atau SMOOTH di dalam game.\n\n" +
+                                "Matikan efek visual tambahan jika tersedia.";
+                    } else if (which == 1) {
+                        title = "VERY LOW GRAPHICS";
+                        message = "Gunakan kualitas grafis paling rendah yang tersedia.\n\n" +
+                                "Nonaktifkan bayangan dan efek tambahan jika tersedia.";
+                    } else {
+                        title = "PIXEL / BLOCKY LOOK";
+                        message = "Efek tekstur kotak-kotak membutuhkan dukungan dari game.\n\n" +
+                                "BOOSTER ZAAX belum bisa mengubah tekstur internal game secara langsung.";
+                    }
+
+                    show(title, message);
+                })
+                .setNegativeButton("CLOSE", null)
+                .show();
+    }
+
     private void antiLag() {
         new AlertDialog.Builder(this)
                 .setTitle("ANTI LAG")
-                .setMessage("Android membatasi aplikasi biasa untuk menghentikan proses aplikasi lain.\\n\\n" +
+                .setMessage("Android membatasi aplikasi biasa untuk menghentikan proses aplikasi lain.\n\n" +
                         "Buka pengaturan aplikasi untuk mengelola aplikasi yang tidak digunakan.")
                 .setPositiveButton("APP SETTINGS",
                         (d, w) -> openSettings(Settings.ACTION_APPLICATION_SETTINGS))
@@ -264,11 +295,11 @@ public class MainActivity extends Activity {
                 long elapsed = System.currentTimeMillis() - start;
 
                 result = "INTERNET RESPONSE: " + elapsed + " ms" +
-                        "\\nHTTP STATUS: " + response +
-                        "\\n\\nIni adalah waktu respons ke server pengujian, " +
+                        "\nHTTP STATUS: " + response +
+                        "\n\nIni adalah waktu respons ke server pengujian, " +
                         "bukan ping server Roblox.";
             } catch (Exception e) {
-                result = "Tes koneksi gagal atau timeout.\\nPeriksa koneksi internet.";
+                result = "Tes koneksi gagal atau timeout.\nPeriksa koneksi internet.";
             } finally {
                 if (connection != null) connection.disconnect();
             }
@@ -323,10 +354,10 @@ public class MainActivity extends Activity {
 
             if (Build.VERSION.SDK_INT >= 23) {
                 Display.Mode[] modes = display.getSupportedModes();
-                info.append("\\n\\nSUPPORTED MODES:");
+                info.append("\n\nSUPPORTED MODES:");
 
                 for (Display.Mode mode : modes) {
-                    info.append("\\n")
+                    info.append("\n")
                             .append(mode.getPhysicalWidth())
                             .append(" x ")
                             .append(mode.getPhysicalHeight())
@@ -352,12 +383,12 @@ public class MainActivity extends Activity {
 
         String info =
                 "MODEL: " + Build.MODEL +
-                "\\nBRAND: " + Build.BRAND +
-                "\\nDEVICE: " + Build.DEVICE +
-                "\\nANDROID: " + Build.VERSION.RELEASE +
-                "\\nSDK: " + Build.VERSION.SDK_INT +
-                "\\nTOTAL RAM: " + memory.totalMem / 1048576 + " MB" +
-                "\\nAVAILABLE RAM: " + memory.availMem / 1048576 + " MB";
+                "\nBRAND: " + Build.BRAND +
+                "\nDEVICE: " + Build.DEVICE +
+                "\nANDROID: " + Build.VERSION.RELEASE +
+                "\nSDK: " + Build.VERSION.SDK_INT +
+                "\nTOTAL RAM: " + memory.totalMem / 1048576 + " MB" +
+                "\nAVAILABLE RAM: " + memory.availMem / 1048576 + " MB";
 
         show("DEVICE INFORMATION", info);
     }
@@ -365,11 +396,11 @@ public class MainActivity extends Activity {
     private void cpuInfo() {
         String info =
                 "PROCESSOR: " + Build.HARDWARE +
-                "\\nDEVICE: " + Build.DEVICE +
-                "\\nCPU CORES: " +
+                "\nDEVICE: " + Build.DEVICE +
+                "\nCPU CORES: " +
                 Runtime.getRuntime().availableProcessors() +
-                "\\nARCHITECTURE: " + Build.SUPPORTED_ABIS[0] +
-                "\\n\\nCPU CLOCK CONTROL IS RESTRICTED BY ANDROID.";
+                "\nARCHITECTURE: " + Build.SUPPORTED_ABIS[0] +
+                "\n\nCPU CLOCK CONTROL IS RESTRICTED BY ANDROID.";
 
         show("CPU INFORMATION", info);
     }
@@ -381,10 +412,10 @@ public class MainActivity extends Activity {
 
         String info =
                 "SCREEN WIDTH: " + width + " px" +
-                "\\nSCREEN HEIGHT: " + height + " px" +
-                "\\nDENSITY: " +
+                "\nSCREEN HEIGHT: " + height + " px" +
+                "\nDENSITY: " +
                 String.format(Locale.US, "%.2f", density) +
-                "\\n\\nThese are current app display metrics.";
+                "\n\nThese are current app display metrics.";
 
         show("RESOLUTION INFORMATION", info);
     }
@@ -400,8 +431,8 @@ public class MainActivity extends Activity {
 
             String info =
                     "TOTAL STORAGE: " + formatGB(total) +
-                    "\\nUSED STORAGE: " + formatGB(used) +
-                    "\\nAVAILABLE STORAGE: " + formatGB(free);
+                    "\nUSED STORAGE: " + formatGB(used) +
+                    "\nAVAILABLE STORAGE: " + formatGB(free);
 
             show("STORAGE INFORMATION", info);
         } catch (Exception e) {
