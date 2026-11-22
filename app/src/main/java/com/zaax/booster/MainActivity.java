@@ -12,6 +12,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,6 +76,9 @@ public class MainActivity extends Activity {
 
         feature("◉", "BOOST PING",
                 "Network connection information");
+
+        feature("📊", "GAMING MONITOR",
+                "Floating live RAM monitor");
 
         section("DEVICE CONTROL");
 
@@ -228,6 +232,10 @@ public class MainActivity extends Activity {
                 networkInfo();
                 break;
 
+            case "GAMING MONITOR":
+                startGamingMonitor();
+                break;
+
             case "FAST TOUCH":
                 dialog(name,
                         "Touch response options depend on " +
@@ -257,6 +265,47 @@ public class MainActivity extends Activity {
                 storageInfo();
                 break;
         }
+    }
+
+    private void startGamingMonitor() {
+
+        if (Build.VERSION.SDK_INT >= 23 &&
+                !Settings.canDrawOverlays(this)) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("ZAAX MONITOR PERMISSION")
+                    .setMessage(
+                            "Izinkan BOOSTER ZAAX menampilkan " +
+                            "panel monitor di atas aplikasi lain."
+                    )
+                    .setPositiveButton("ALLOW", (d, w) -> {
+                        Intent intent = new Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName())
+                        );
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("CANCEL", null)
+                    .show();
+
+            return;
+        }
+
+        Intent service = new Intent(
+                this, MonitorService.class
+        );
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(service);
+        } else {
+            startService(service);
+        }
+
+        Toast.makeText(
+                this,
+                "ZAAX MONITOR STARTING",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void networkInfo() {
