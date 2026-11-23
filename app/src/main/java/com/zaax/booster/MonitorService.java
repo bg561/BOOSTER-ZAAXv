@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Handler;
@@ -30,6 +32,9 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 public class MonitorService extends Service {
 
     private static final String CHANNEL_ID = "zaax_monitor";
@@ -44,6 +49,8 @@ public class MonitorService extends Service {
     private TextView fpsText;
     private TextView pingText;
 
+    private GLSurfaceView glView;
+
     private final Handler handler =
             new Handler(Looper.getMainLooper());
 
@@ -55,11 +62,18 @@ public class MonitorService extends Service {
 
     private int cpuCount = 1;
 
+    private long lastFrameTime = 0;
+    private int frameCount = 0;
+    private int measuredFps = 0;
+
+    private String gpuName = "GPU N/A";
+
     private final Runnable updater = new Runnable() {
         @Override
         public void run() {
             updateRam();
             updateCpu();
+            updateFps();
 
             if (panel != null) {
                 handler.postDelayed(this, 1500);
@@ -99,6 +113,7 @@ public class MonitorService extends Service {
         }
 
         createPanel();
+        createGpuDetector();
 
         handler.post(updater);
         handler.post(pingUpdater);
@@ -174,7 +189,7 @@ public class MonitorService extends Service {
         ramText = createMetric("RAM --");
         cpuText = createMetric("CPU --");
         gpuText = createMetric("GPU N/A");
-        fpsText = createMetric("FPS N/A");
+        fpsText = createMetric("FPS --");
         pingText = createMetric("PING --");
 
         TextView close = createMetric("×");
@@ -217,7 +232,6 @@ public class MonitorService extends Service {
 
             private int startX;
             private int startY;
-
             private float touchX;
             private float touchY;
 
@@ -258,6 +272,78 @@ public class MonitorService extends Service {
         });
 
         windowManager.addView(panel, params);
+    }
+
+    private void createGpuDetector() {
+
+        try {
+            glView = new GLSurfaceView(this);
+            glView.setEGLContextClientVersion(2);
+
+            glView.setRenderer(new GLSurfaceView.Renderer() {
+
+                @Override
+                public void onSurfaceCreated(
+                        GL10 gl,
+                        EGLConfig config) {
+
+                    String renderer =
+                            GLES20.glGetString(
+                                    GLES20.GL_RENDERER
+                            );
+
+                    String vendor =
+                            GLES20.glGetString(
+                                    GLES20.GL_VENDOR
+                            );
+
+                    String result = "GPU N/A";
+
+                    if (renderer != null &&
+                            !renderer.trim().isEmpty()) {
+                        result = "GPU " + renderer.trim();
+                    } else if (vendor != null &&
+                            !vendor.trim().isEmpty()) {
+                        result = "GPU " + vendor.trim();
+                    }
+
+                    final String finalResult = result;
+
+                    handler.post(() -> {
+                        gpuName = finalResult;
+
+                        if (gpuText != null) {
+                            gpuText.setText(gpuName);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSurfaceChanged(
+                        GL10 gl,
+                        int width,
+                        int height) {
+                }
+
+                @Override
+                public void onDrawFrame(GL10 gl) {
+                }
+            });
+
+            glView.setRenderMode(
+                    GLSurfaceView.RENDERMODE_WHEN_DIRTY
+            );
+
+            glView.setVisibility(View.GONE);
+
+            glView.onResume();
+            glView.requestRender();
+
+        } catch (Exception e) {
+            if (gpuText != null) {
+                gpuText.setText("GPU N/A");
+            }
+        }
     }
 
     private void updateRam() {
@@ -348,6 +434,35 @@ public class MonitorService extends Service {
         }
     }
 
+    private void updateFps() {
+
+        if (fpsText == null) return;
+
+        long now = SystemClock.elapsedRealtime();
+
+        if (lastFrameTime == 0) {
+            lastFrameTime = now;
+            frameCount = 0;
+            return;
+        }
+
+        frameCount++;
+
+        long elapsed = now - lastFrameTime;
+
+        if (elapsed >= 1000) {
+            measuredFps =
+                    (int) (frameCount * 1000L / elapsed);
+
+            lastFrameTime = now;
+            frameCount = 0;
+
+            fpsText.setText(
+                    "FPS " + measuredFps + " (UI)"
+            );
+        }
+    }
+
     private void testPing() {
 
         HttpURLConnection connection = null;
@@ -409,6 +524,14 @@ public class MonitorService extends Service {
         handler.removeCallbacks(pingUpdater);
 
         pingExecutor.shutdownNow();
+
+        if (glView != null) {
+            try {
+                glView.onPause();
+            } catch (Exception ignored) {
+            }
+            glView = null;
+        }
 
         if (windowManager != null && panel != null) {
             try {
