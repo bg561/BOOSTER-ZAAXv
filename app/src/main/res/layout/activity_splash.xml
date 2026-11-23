@@ -1,0 +1,77 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#090909">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#180000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <ImageView
+            android:id="@+id/splash_logo"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:contentDescription="ZAAX Crown Logo"
+            android:scaleType="fitCenter"
+            android:src="@drawable/zaax_logo" />
+
+        <TextView
+            android:id="@+id/splash_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans"
+            android:letterSpacing="0.12"
+            android:text="BOOSTER ZAAX"
+            android:textColor="#FF1744"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/splash_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:letterSpacing="0.18"
+            android:text="PREMIUM GAMING EXPERIENCE"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/splash_creator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="38dp"
+            android:text="ZAAX × ALBY"
+            android:textColor="#FF5252"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:layout_width="130dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="35dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#FF1744" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="INITIALIZING SYSTEM..."
+            android:textColor="#999999"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+</FrameLayout>
