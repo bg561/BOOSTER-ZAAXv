@@ -23,7 +23,7 @@
         android:theme="@android:style/Theme.Material.NoActionBar">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
 
             <intent-filter>
@@ -32,6 +32,10 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"/>
 
         <service
             android:name=".MonitorService"
