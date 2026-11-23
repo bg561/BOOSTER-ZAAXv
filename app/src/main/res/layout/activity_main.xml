@@ -82,64 +82,119 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GAMING FEATURES"
-            android:textColor="#FFFFFF"
+            android:text="PERFORMANCE TOOLS"
+            android:textColor="#FF1744"
             android:textSize="16sp"
             android:textStyle="bold"
             android:paddingBottom="12dp" />
 
         <Button
+            android:id="@+id/btn_boost_game"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="BOOST GAME"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <Button
+            android:id="@+id/btn_anti_lag"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="ANTI LAG"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <Button
+            android:id="@+id/btn_boost_ping"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="BOOST PING"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <Button
+            android:id="@+id/btn_pixel_graphics"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="LOW GRAPHICS"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <Button
+            android:id="@+id/btn_gaming_monitor"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="GAMING MONITOR"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DEVICE CONTROL"
+            android:textColor="#FF1744"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp" />
+
+        <Button
+            android:id="@+id/btn_fast_touch"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="FAST TOUCH"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <Button
+            android:id="@+id/btn_refresh_rate"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="REFRESH RATE"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btn_device_info"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="DEVICE INFORMATION"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btn_cpu_info"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="CPU INFO"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btn_resolution"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="RESOLUTION"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btn_storage_info"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="STORAGE INFO"
+            android:background="@drawable/zaax_button"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp" />
 
         <TextView
