@@ -1,77 +1,66 @@
 
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#090909">
+package com.zaax.booster;
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#180000" />
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+public class SplashActivity extends Activity {
 
-        <ImageView
-            android:id="@+id/splash_logo"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:contentDescription="ZAAX Crown Logo"
-            android:scaleType="fitCenter"
-            android:src="@drawable/zaax_logo" />
+    private final Handler handler = new Handler();
 
-        <TextView
-            android:id="@+id/splash_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="sans"
-            android:letterSpacing="0.12"
-            android:text="BOOSTER ZAAX"
-            android:textColor="#FF1744"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+    @Override
+    protected void onCreate(Bundle state) {
+        super.onCreate(state);
 
-        <TextView
-            android:id="@+id/splash_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:letterSpacing="0.18"
-            android:text="PREMIUM GAMING EXPERIENCE"
-            android:textColor="#FFFFFF"
-            android:textSize="11sp" />
+        getWindow().setStatusBarColor(0xFF090909);
+        getWindow().setNavigationBarColor(0xFF090909);
 
-        <TextView
-            android:id="@+id/splash_creator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
-            android:text="ZAAX × ALBY"
-            android:textColor="#FF5252"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+        setContentView(R.layout.activity_splash);
 
-        <ProgressBar
-            android:layout_width="130dp"
-            android:layout_height="3dp"
-            android:layout_marginTop="35dp"
-            android:indeterminate="true"
-            android:indeterminateTint="#FF1744" />
+        ImageView logo = findViewById(R.id.splash_logo);
+        TextView title = findViewById(R.id.splash_title);
+        TextView subtitle = findViewById(R.id.splash_subtitle);
+        TextView creator = findViewById(R.id.splash_creator);
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="INITIALIZING SYSTEM..."
-            android:textColor="#999999"
-            android:textSize="10sp" />
+        Animation zoom = AnimationUtils.loadAnimation(
+                this, R.anim.zaax_zoom_in);
 
-    </LinearLayout>
+        Animation fade = AnimationUtils.loadAnimation(
+                this, R.anim.zaax_fade_in);
 
-</FrameLayout>
+        Animation bounce = AnimationUtils.loadAnimation(
+                this, R.anim.zaax_bounce);
+
+        logo.startAnimation(zoom);
+
+        handler.postDelayed(() -> {
+            title.startAnimation(bounce);
+            subtitle.startAnimation(fade);
+            creator.startAnimation(fade);
+        }, 700);
+
+        handler.postDelayed(() -> {
+            startActivity(new Intent(
+                    SplashActivity.this,
+                    MainActivity.class));
+
+            overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+
+            finish();
+        }, 4500);
+    }
+
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+}
