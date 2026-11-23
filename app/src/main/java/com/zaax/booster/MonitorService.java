@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.Locale;
+
 public class MonitorService extends Service {
 
     private static final String CHANNEL_ID = "zaax_monitor";
@@ -30,7 +32,9 @@ public class MonitorService extends Service {
     private LinearLayout panel;
     private TextView ramText;
     private WindowManager.LayoutParams params;
-    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private final Handler handler =
+            new Handler(Looper.getMainLooper());
 
     private final Runnable updater = new Runnable() {
         @Override
@@ -62,11 +66,12 @@ public class MonitorService extends Service {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "ZAAX Gaming Monitor",
-                    NotificationManager.IMPORTANCE_LOW
-            );
+            NotificationChannel channel =
+                    new NotificationChannel(
+                            CHANNEL_ID,
+                            "ZAAX Gaming Monitor",
+                            NotificationManager.IMPORTANCE_LOW
+                    );
 
             NotificationManager manager =
                     getSystemService(NotificationManager.class);
@@ -87,42 +92,58 @@ public class MonitorService extends Service {
         return builder
                 .setContentTitle("BOOSTER ZAAX")
                 .setContentText("Gaming Monitor aktif")
-                .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                .setSmallIcon(
+                        android.R.drawable.ic_menu_info_details
+                )
                 .build();
     }
 
     private void createPanel() {
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+        windowManager =
+                (WindowManager) getSystemService(WINDOW_SERVICE);
 
         panel = new LinearLayout(this);
-        panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setPadding(18, 14, 18, 14);
+        panel.setOrientation(LinearLayout.HORIZONTAL);
+        panel.setGravity(Gravity.CENTER_VERTICAL);
+
+        panel.setPadding(10, 5, 8, 5);
 
         GradientDrawable background = new GradientDrawable();
-        background.setColor(Color.rgb(20, 20, 24));
-        background.setCornerRadius(20);
-        background.setStroke(2, Color.RED);
+        background.setColor(0xCC141418);
+        background.setCornerRadius(30);
+        background.setStroke(1, 0xCCFF3030);
+
         panel.setBackground(background);
 
+        // ZAAX DRAG HANDLE
         TextView title = new TextView(this);
-        title.setText("♛ ZAAX MONITOR");
+        title.setText("♛ ZAAX");
         title.setTextColor(Color.RED);
-        title.setTextSize(16);
-        title.setPadding(0, 0, 0, 10);
+        title.setTextSize(11);
+        title.setTypeface(null, 1);
+        title.setPadding(3, 0, 10, 0);
 
+        // RAM INFORMATION
         ramText = new TextView(this);
         ramText.setTextColor(Color.WHITE);
-        ramText.setTextSize(13);
+        ramText.setTextSize(11);
+        ramText.setSingleLine(true);
+        ramText.setTypeface(null, 1);
 
+        // CLOSE BUTTON
         TextView close = new TextView(this);
-        close.setText("TUTUP MONITOR  ✕");
+        close.setText(" × ");
         close.setTextColor(Color.RED);
-        close.setTextSize(13);
-        close.setPadding(0, 12, 0, 0);
+        close.setTextSize(17);
+        close.setPadding(8, 0, 2, 0);
+
         close.setOnClickListener(v -> stopSelf());
 
         panel.addView(title);
+
         panel.addView(ramText);
+
         panel.addView(close);
 
         int overlayType;
@@ -131,7 +152,8 @@ public class MonitorService extends Service {
             overlayType =
                     WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            overlayType = WindowManager.LayoutParams.TYPE_PHONE;
+            overlayType =
+                    WindowManager.LayoutParams.TYPE_PHONE;
         }
 
         params = new WindowManager.LayoutParams(
@@ -146,31 +168,50 @@ public class MonitorService extends Service {
         params.x = 20;
         params.y = 100;
 
-        // Geser panel melalui bagian judul saja.
+        // DRAG MONITOR
         title.setOnTouchListener(new View.OnTouchListener() {
-            private int startX, startY;
-            private float touchX, touchY;
+
+            private int startX;
+            private int startY;
+
+            private float touchX;
+            private float touchY;
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+
                 switch (event.getAction()) {
+
                     case MotionEvent.ACTION_DOWN:
+
                         startX = params.x;
                         startY = params.y;
+
                         touchX = event.getRawX();
                         touchY = event.getRawY();
+
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
+
                         params.x = startX +
                                 (int) (event.getRawX() - touchX);
+
                         params.y = startY +
                                 (int) (event.getRawY() - touchY);
 
                         try {
-                            windowManager.updateViewLayout(panel, params);
+                            windowManager.updateViewLayout(
+                                    panel, params
+                            );
                         } catch (Exception ignored) {
                         }
+
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+
                         return true;
                 }
 
@@ -182,11 +223,13 @@ public class MonitorService extends Service {
     }
 
     private void updateRam() {
+
         if (ramText == null) return;
 
         ActivityManager manager =
                 (ActivityManager) getSystemService(
-                        Context.ACTIVITY_SERVICE);
+                        Context.ACTIVITY_SERVICE
+                );
 
         ActivityManager.MemoryInfo info =
                 new ActivityManager.MemoryInfo();
@@ -198,13 +241,18 @@ public class MonitorService extends Service {
         long used = total - available;
 
         ramText.setText(
-                "RAM USED: " + used + " MB\n" +
-                "RAM TOTAL: " + total + " MB"
+                String.format(
+                        Locale.US,
+                        "RAM %d/%d MB",
+                        used,
+                        total
+                )
         );
     }
 
     @Override
     public void onDestroy() {
+
         handler.removeCallbacks(updater);
 
         if (windowManager != null && panel != null) {
@@ -212,6 +260,7 @@ public class MonitorService extends Service {
                 windowManager.removeView(panel);
             } catch (Exception ignored) {
             }
+
             panel = null;
         }
 
