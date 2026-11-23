@@ -1,84 +1,165 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#101010"
+    android:background="#090909"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center_horizontal">
+        android:padding="20dp">
 
-        <ImageView
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:src="@drawable/zaax_logo"
-            android:contentDescription="ZAAX Logo"
-            android:layout_marginTop="20dp"/>
-
-        <TextView
+        <!-- HEADER -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="BOOSTER ZAAX"
-            android:textColor="#FF1744"
-            android:textSize="30sp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="25dp">
+
+            <ImageView
+                android:layout_width="105dp"
+                android:layout_height="105dp"
+                android:src="@drawable/zaax_logo"
+                android:scaleType="fitCenter"
+                android:contentDescription="ZAAX Logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BOOSTER ZAAX"
+                android:textColor="#FF1744"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PREMIUM GAMING EXPERIENCE"
+                android:textColor="#999999"
+                android:textSize="11sp"
+                android:letterSpacing="0.12"
+                android:paddingTop="6dp" />
+
+        </LinearLayout>
+
+        <!-- STATUS PANEL -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_zaax"
+            android:padding="18dp"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SYSTEM STATUS"
+                android:textColor="#FF1744"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BOOSTER ZAAX READY"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:paddingTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gaming dashboard initialized"
+                android:textColor="#AAAAAA"
+                android:textSize="12sp"
+                android:paddingTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- FEATURES TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GAMING FEATURES"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:padding="12dp"/>
+            android:paddingBottom="12dp" />
 
+        <!-- BUTTONS -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="BOOST GAME"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="ANTI LAG"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="BOOST PING"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="LOW GRAPHICS"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="FAST TOUCH"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:text="DEVICE INFORMATION"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/zaax_button"
+            android:layout_marginBottom="10dp" />
+
+        <!-- FOOTER -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PREMIUM GAMING TOOL"
-            android:textColor="#AAAAAA"
-            android:textSize="12sp"
+            android:text="POWERED BY ZAAX"
+            android:textColor="#666666"
+            android:textSize="11sp"
             android:gravity="center"
-            android:paddingBottom="25dp"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="BOOST GAME"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="ANTI LAG"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="BOOST PING"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="LOW GRAPHICS"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="FAST TOUCH"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="DEVICE INFORMATION"
-            android:background="@drawable/zaax_button"
-            android:textColor="#FFFFFF"/>
+            android:paddingTop="25dp"
+            android:paddingBottom="15dp" />
 
     </LinearLayout>
+
 </ScrollView>
