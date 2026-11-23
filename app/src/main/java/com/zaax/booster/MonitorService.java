@@ -24,8 +24,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
@@ -52,8 +50,10 @@ public class MonitorService extends Service {
     private final ExecutorService pingExecutor =
             Executors.newSingleThreadExecutor();
 
-    private long previousTotal = 0;
-    private long previousIdle = 0;
+    private long previousCpuTime = 0;
+    private long previousWallTime = 0;
+
+    private int cpuCount = 1;
 
     private final Runnable updater = new Runnable() {
         @Override
@@ -70,7 +70,7 @@ public class MonitorService extends Service {
     private final Runnable pingUpdater = new Runnable() {
         @Override
         public void run() {
-            if (panel != null) {
+            if (panel != null && !pingExecutor.isShutdown()) {
                 pingExecutor.execute(
                         MonitorService.this::testPing
                 );
@@ -83,6 +83,11 @@ public class MonitorService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        cpuCount = Math.max(
+                1,
+                Runtime.getRuntime().availableProcessors()
+        );
 
         createNotificationChannel();
         startForeground(1, buildNotification());
@@ -292,65 +297,54 @@ public class MonitorService extends Service {
 
         if (cpuText == null) return;
 
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("/proc/stat"))) {
+        try {
+            long currentCpuTime =
+                    android.os.Process.getElapsedCpuTime();
 
-            String line = reader.readLine();
+            long currentWallTime =
+                    SystemClock.elapsedRealtime();
 
-            if (line == null || !line.startsWith("cpu ")) {
-                cpuText.setText("CPU N/A");
-                return;
-            }
+            if (previousCpuTime == 0 ||
+                    previousWallTime == 0) {
 
-            String[] values = line.trim().split("\\s+");
+                previousCpuTime = currentCpuTime;
+                previousWallTime = currentWallTime;
 
-            if (values.length < 5) {
-                cpuText.setText("CPU N/A");
-                return;
-            }
-
-            long total = 0;
-
-            for (int i = 1; i < values.length; i++) {
-                total += Long.parseLong(values[i]);
-            }
-
-            long idle = Long.parseLong(values[4]);
-
-            if (values.length > 5) {
-                idle += Long.parseLong(values[5]);
-            }
-
-            if (previousTotal == 0) {
-                previousTotal = total;
-                previousIdle = idle;
                 cpuText.setText("CPU --");
                 return;
             }
 
-            long totalDiff = total - previousTotal;
-            long idleDiff = idle - previousIdle;
+            long cpuDiff =
+                    currentCpuTime - previousCpuTime;
 
-            previousTotal = total;
-            previousIdle = idle;
+            long wallDiff =
+                    currentWallTime - previousWallTime;
 
-            if (totalDiff <= 0 || idleDiff < 0) {
+            previousCpuTime = currentCpuTime;
+            previousWallTime = currentWallTime;
+
+            if (wallDiff <= 0 || cpuDiff < 0) {
                 cpuText.setText("CPU --");
                 return;
             }
 
-            int usage = (int) Math.round(
-                    100.0 * (totalDiff - idleDiff) / totalDiff
+            double usage =
+                    (cpuDiff * 100.0) /
+                    (wallDiff * cpuCount);
+
+            int percentage = (int) Math.round(usage);
+
+            percentage = Math.max(
+                    0,
+                    Math.min(100, percentage)
             );
 
-            usage = Math.max(0, Math.min(100, usage));
-
-            cpuText.setText("CPU " + usage + "%");
+            cpuText.setText("CPU " + percentage + "%");
 
         } catch (Exception e) {
             cpuText.setText("CPU N/A");
-            previousTotal = 0;
-            previousIdle = 0;
+            previousCpuTime = 0;
+            previousWallTime = 0;
         }
     }
 
