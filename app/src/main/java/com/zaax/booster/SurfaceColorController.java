@@ -1,11 +1,7 @@
 
 package com.zaax.booster;
 
-import android.os.SystemProperties;
-
 public final class SurfaceColorController {
-
-    private static final String TAG = "ZAAX_GRAPHICS";
 
     private SurfaceColorController() {
     }
@@ -20,9 +16,7 @@ public final class SurfaceColorController {
             return false;
         }
 
-        // SystemProperties is hidden and not directly accessible
-        // from an ordinary Android application.
-        // Actual execution must be performed by a Shizuku UserService.
+        // Belum ada perintah perubahan saturasi.
         return false;
     }
 
