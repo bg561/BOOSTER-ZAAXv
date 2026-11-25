@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.view.Display;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +37,17 @@ public class MainActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
 
         setContentView(R.layout.activity_main);
+
+        // ZAAX GLOBAL NOTIFICATION SUBSCRIPTION
+        FirebaseMessaging.getInstance()
+                .subscribeToTopic("zaax_global")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this,
+                                "ZAAX GLOBAL CONNECTED",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         connectButton(R.id.btn_boost_game, "BOOST GAME");
         connectButton(R.id.btn_anti_lag, "ANTI LAG");
