@@ -38,7 +38,6 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        // ZAAX GLOBAL NOTIFICATION SUBSCRIPTION
         FirebaseMessaging.getInstance()
                 .subscribeToTopic("zaax_global")
                 .addOnCompleteListener(task -> {
@@ -105,37 +104,51 @@ public class MainActivity extends Activity {
         }
     }
 
+    // ZAAX GRAPHIC MC - SHIZUKU STATUS
     private void pixelGraphics() {
-        String[] presets = {
-                "LOW GRAPHICS",
-                "VERY LOW GRAPHICS",
-                "PIXEL / BLOCKY LOOK"
-        };
 
-        new AlertDialog.Builder(this)
-                .setTitle("ZAAX PIXEL GRAPHICS")
-                .setItems(presets, (dialog, which) -> {
-                    String title;
-                    String message;
+        if (!GraphicEngine.isAndroidSupported()) {
+            show("ZAAX GRAPHIC MC",
+                    "ANDROID VERSION NOT SUPPORTED\n\n" +
+                    "Graphic MC requires Android 11 or newer.");
+            return;
+        }
 
-                    if (which == 0) {
-                        title = "LOW GRAPHICS";
-                        message = "Pilih kualitas grafis LOW atau SMOOTH di dalam game.\n\n" +
-                                "Matikan efek visual tambahan jika tersedia.";
-                    } else if (which == 1) {
-                        title = "VERY LOW GRAPHICS";
-                        message = "Gunakan kualitas grafis paling rendah yang tersedia.\n\n" +
-                                "Nonaktifkan bayangan dan efek tambahan jika tersedia.";
-                    } else {
-                        title = "PIXEL / BLOCKY LOOK";
-                        message = "Efek tekstur kotak-kotak membutuhkan dukungan dari game.\n\n" +
-                                "BOOSTER ZAAX belum bisa mengubah tekstur internal game secara langsung.";
-                    }
+        if (!ShizukuManager.isAvailable()) {
+            show("ZAAX GRAPHIC MC",
+                    "WIRELESS ADB NOT CONNECTED\n\n" +
+                    "Start Shizuku using Wireless Debugging, " +
+                    "then return to BOOSTER ZAAX.");
+            return;
+        }
 
-                    show(title, message);
-                })
-                .setNegativeButton("CLOSE", null)
-                .show();
+        if (!ShizukuManager.hasPermission()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("ZAAX GRAPHIC MC")
+                    .setMessage(
+                            "SHIZUKU PERMISSION REQUIRED\n\n" +
+                            "BOOSTER ZAAX belum mendapatkan izin Shizuku."
+                    )
+                    .setPositiveButton("REQUEST ACCESS",
+                            (dialog, which) -> {
+                                ShizukuManager.requestPermission();
+
+                                Toast.makeText(this,
+                                        "Check the Shizuku permission prompt",
+                                        Toast.LENGTH_LONG).show();
+                            })
+                    .setNegativeButton("CLOSE", null)
+                    .show();
+            return;
+        }
+
+        show("ZAAX GRAPHIC MC",
+                "SHIZUKU CONNECTED\n\n" +
+                "PERMISSION: GRANTED\n" +
+                "ANDROID: " + Build.VERSION.RELEASE + "\n\n" +
+                "GRAPHIC MC FOUNDATION: READY\n\n" +
+                "Shizuku connection is working.\n\n" +
+                "Actual all-game visual effects are not implemented yet.");
     }
 
     private void antiLag() {
