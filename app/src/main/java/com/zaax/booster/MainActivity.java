@@ -28,6 +28,7 @@ import java.util.Locale;
 public class MainActivity extends Activity {
 
     private final int BG = Color.rgb(9, 10, 15);
+    private boolean pixelEffectEnabled = false;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -104,51 +105,70 @@ public class MainActivity extends Activity {
         }
     }
 
-    // ZAAX GRAPHIC MC - SHIZUKU STATUS
+    // ZAAX PIXEL GRAPHICS - OVERLAY ON/OFF
     private void pixelGraphics() {
 
-        if (!GraphicEngine.isAndroidSupported()) {
-            show("ZAAX GRAPHIC MC",
-                    "ANDROID VERSION NOT SUPPORTED\n\n" +
-                    "Graphic MC requires Android 11 or newer.");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            show("ZAAX PIXEL GRAPHICS",
+                    "Requires Android 11 or newer.");
             return;
         }
 
-        if (!ShizukuManager.isAvailable()) {
-            show("ZAAX GRAPHIC MC",
-                    "WIRELESS ADB NOT CONNECTED\n\n" +
-                    "Start Shizuku using Wireless Debugging, " +
-                    "then return to BOOSTER ZAAX.");
-            return;
-        }
-
-        if (!ShizukuManager.hasPermission()) {
+        if (!Settings.canDrawOverlays(this)) {
             new AlertDialog.Builder(this)
-                    .setTitle("ZAAX GRAPHIC MC")
+                    .setTitle("ZAAX PIXEL EFFECT")
                     .setMessage(
-                            "SHIZUKU PERMISSION REQUIRED\n\n" +
-                            "BOOSTER ZAAX belum mendapatkan izin Shizuku."
+                            "Izinkan BOOSTER ZAAX menampilkan efek di atas aplikasi lain."
                     )
-                    .setPositiveButton("REQUEST ACCESS",
-                            (dialog, which) -> {
-                                ShizukuManager.requestPermission();
-
-                                Toast.makeText(this,
-                                        "Check the Shizuku permission prompt",
-                                        Toast.LENGTH_LONG).show();
-                            })
+                    .setPositiveButton("ALLOW", (dialog, which) -> {
+                        Intent permissionIntent = new Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName())
+                        );
+                        startActivity(permissionIntent);
+                    })
                     .setNegativeButton("CLOSE", null)
                     .show();
             return;
         }
 
-        show("ZAAX GRAPHIC MC",
-                "SHIZUKU CONNECTED\n\n" +
-                "PERMISSION: GRANTED\n" +
-                "ANDROID: " + Build.VERSION.RELEASE + "\n\n" +
-                "GRAPHIC MC FOUNDATION: READY\n\n" +
-                "Shizuku connection is working.\n\n" +
-                "Actual all-game visual effects are not implemented yet.");
+        if (pixelEffectEnabled) {
+            Intent stopIntent = new Intent(
+                    this, PixelOverlayService.class
+            );
+            stopIntent.setAction(PixelOverlayService.ACTION_STOP);
+
+            startService(stopIntent);
+            pixelEffectEnabled = false;
+
+            Toast.makeText(this,
+                    "ZAAX PIXEL EFFECT OFF",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Intent effectIntent = new Intent(
+                    this, PixelOverlayService.class
+            );
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(effectIntent);
+            } else {
+                startService(effectIntent);
+            }
+
+            pixelEffectEnabled = true;
+
+            Toast.makeText(this,
+                    "ZAAX PIXEL EFFECT ON",
+                    Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            pixelEffectEnabled = false;
+            show("ZAAX PIXEL GRAPHICS",
+                    "Tidak dapat memulai efek overlay.");
+        }
     }
 
     private void antiLag() {
