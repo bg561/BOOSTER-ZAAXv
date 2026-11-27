@@ -1,7 +1,7 @@
 package com.zaax.booster;
 
 interface IUserService {
-    void destroy() = 16777114;
+    void destroy();
     void exit();
     String getServiceInfo();
 }
